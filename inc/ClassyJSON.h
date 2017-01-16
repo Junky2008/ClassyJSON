@@ -16,7 +16,7 @@ typedef struct Jobject
 	char *key;
 	char *valueAsString;
 	long valueAsInt16;
-	long valueAsHex;
+	unsigned long valueAsHex;
 	bool valueAsBool;
 	bool isArray;
 	bool isObject;

@@ -14,7 +14,10 @@ SDIR=src
 #-D_GNU_SOURCE is included for TEMP_FAILURE_RETRY
 # pthread used for multi threading and rt for Realtime extensions
 # dynlcms is the dynamic shared library for the custom specific LCMS behavior
-CFLAGS+= -I./$(IDIR) -I./$(ILIB)
+
+CHECK_DIR:= check
+
+CFLAGS+= -I./$(IDIR) -I./$(ILIB) -I../$(CHECK_DIR)/build/src -I../$(CHECK_DIR)/build -L../$(CHECK_DIR)/build/src -g -lcheck -lpthread -lrt -lm -Wall -O3
 
 SOURCES := $(wildcard $(SDIR)/*.c)
 
@@ -24,7 +27,7 @@ OBJECTS := $(foreach x, $(basename $(SOURCES)), $(x).o)
 
 #-------------------------------------------------------------------------------
 # target: all 	  - builds the Control Box application
-all: createdir classyjson
+all: check createdir classyjson
 
 #-------------------------------------------------------------------------------
 # target: createdir  - creates obj dirs
@@ -55,3 +58,11 @@ clean:
 classyjson: $(OBJECTS)
 	@echo  --- Building cb_app2_arm_16b AAA-LUX Controlbox Application with DEBUG_LEVEL=$(DBG_LVL) and routing=16b/macS ---
 	$(CXX) $(patsubst $(SDIR)/%,$(ODIR)/%,$(OBJECTS)) -o ClassyTest $(CFLAGS) -L.. -lClassyJSON
+
+check:
+	if [ -d "../$(CHECK_DIR)/.git" ]; then \
+		(cd ../$(CHECK_DIR) && git pull); \
+	else \
+		(cd .. && git clone https://github.com/libcheck/check.git $(CHECK_DIR)); \
+	fi
+	(cd ../$(CHECK_DIR) && mkdir -p build && cd build && cmake .. && make)

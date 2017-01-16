@@ -13,7 +13,7 @@ SDIR=src
 #-D_GNU_SOURCE is included for TEMP_FAILURE_RETRY
 # pthread used for multi threading and rt for Realtime extensions
 # dynlcms is the dynamic shared library for the custom specific LCMS behavior
-CFLAGS+= -I./$(IDIR) -fPIC
+CFLAGS+= -I./$(IDIR) -fPIC -O3
 
 SOURCES := $(wildcard $(SDIR)/*.c)
 

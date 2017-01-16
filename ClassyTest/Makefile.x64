@@ -17,7 +17,7 @@ SDIR=src
 
 CHECK_DIR:= check
 
-CFLAGS+= -I./$(IDIR) -I./$(ILIB) -I../$(CHECK_DIR)/build/src -I../$(CHECK_DIR)/build -L../$(CHECK_DIR)/build/src -g -lcheck -lpthread -lrt -lm -Wall -Og
+CFLAGS+= -I./$(IDIR) -I./$(ILIB) -I../$(CHECK_DIR)/build/src -I../$(CHECK_DIR)/build -L../$(CHECK_DIR)/build/src -g -lcheck -lpthread -lrt -lm -Wall -O3
 
 SOURCES := $(wildcard $(SDIR)/*.c)
 
