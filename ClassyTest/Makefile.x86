@@ -1,0 +1,57 @@
+#-------------------------------------------------------------------------------
+#  Makefile for the Control Box application to build cb_app2
+#		Author: Bob Peters
+#-------------------------------------------------------------------------------
+
+CXX:=gcc
+CC:=gcc
+IDIR=inc
+ILIB=../inc
+ODIR=obj
+SDIR=src
+
+#-------------------------------------------------------------------------------
+#-D_GNU_SOURCE is included for TEMP_FAILURE_RETRY
+# pthread used for multi threading and rt for Realtime extensions
+# dynlcms is the dynamic shared library for the custom specific LCMS behavior
+CFLAGS+= -I./$(IDIR) -I./$(ILIB) -m32
+
+SOURCES := $(wildcard $(SDIR)/*.c)
+
+OBJECTS := $(foreach x, $(basename $(SOURCES)), $(x).o)
+
+.PHONY: all
+
+#-------------------------------------------------------------------------------
+# target: all 	  - builds the Control Box application
+all: createdir classyjson
+
+#-------------------------------------------------------------------------------
+# target: createdir  - creates obj dirs
+createdir:
+	mkdir -p $(ODIR)
+
+#-------------------------------------------------------------------------------
+# target: help	  - shows which target there are
+help:
+	@echo ---Help is on the way---------
+	@egrep "^# option:" [Mm]akefile
+	@echo ------------------------------
+	@egrep "^# target:" [Mm]akefile
+
+
+#-------------------------------------------------------------------------------
+# target: clean	  - removes the binary and .o files
+clean:
+	rm -f $(ODIR)/*.o *~ ClassyTest
+	
+#-------------------------------------------------------------------------------
+# target: *.o	  - compile the c files to o files
+%.o: %.c
+	$(CC) -c $< -o $(patsubst $(SDIR)/%,$(ODIR)/%,$@) $(CFLAGS)
+
+#-------------------------------------------------------------------------------
+# target: classyjson  - builds classyjson
+classyjson: $(OBJECTS)
+	@echo  --- Building cb_app2_arm_16b AAA-LUX Controlbox Application with DEBUG_LEVEL=$(DBG_LVL) and routing=16b/macS ---
+	$(CXX) $(patsubst $(SDIR)/%,$(ODIR)/%,$(OBJECTS)) -o ClassyTest $(CFLAGS) -L.. -lClassyJSON

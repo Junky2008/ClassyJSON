@@ -1,0 +1,12 @@
+{
+  "user1": {
+    "naam": "Floris",
+    "age": 25,
+    "afgestudeerd": true
+  },
+  "user2": {
+    "naam": "Christiaan",
+    "age": 20,
+    "afgestudeerd": false
+  }
+}

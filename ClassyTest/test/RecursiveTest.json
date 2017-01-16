@@ -1,0 +1,24 @@
+{
+  "Object": {
+    "Array1inObject": [ 1, 2, 3 ],
+    "Array2inObject": [ "first", "second", "third", "fourth", "fifth" ]
+  },
+  "Array": [
+    {
+      "Object1inArray": true,
+      "data": "data"
+    },
+    {
+      "Object2inArray": true,
+      "data": 0x10
+    },
+  ],
+  "Object2": {
+    "ArrayInObject": [
+      {
+        "ObjectinArrayinObject": true,
+        "data": 10
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "masterObject": {
+    "ChildObject1": {
+      "test1": 1,
+      "test2": "test2"
+    },
+    "ChildObject2": {
+      "test1": 1,
+      "test2": "test2",
+      "thirdObject": {
+        "data": "data"
+      }
+    }
+  }
+}
