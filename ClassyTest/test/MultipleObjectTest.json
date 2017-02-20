@@ -1,12 +1,12 @@
 {
   "user1": {
-    "naam": "Floris",
-    "age": 25,
+    "naam": "John Doe",
+    "age": 39,
     "afgestudeerd": true
   },
   "user2": {
-    "naam": "Christiaan",
-    "age": 20,
+    "naam": "Jane Doe",
+    "age": 55,
     "afgestudeerd": false
   }
 }

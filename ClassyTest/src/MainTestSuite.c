@@ -71,9 +71,9 @@ START_TEST(simpleObjectTest)
 	ck_assert(CJ_getKey(&object, "age")->isObject == false);
 	ck_assert(CJ_getKey(&object, "age")->size == 0);
 
-	ck_assert_str_eq(CJ_getKey(&object, "naam")->valueAsString, "Floris");
-	ck_assert_str_eq(CJ_getKey(&object, "work")->valueAsString, "AAA-LUX");
-	ck_assert(CJ_getKey(&object, "age")->valueAsInt16 == 25);
+	ck_assert_str_eq(CJ_getKey(&object, "naam")->valueAsString, "Jane Doe");
+	ck_assert_str_eq(CJ_getKey(&object, "work")->valueAsString, "Example.org");
+	ck_assert(CJ_getKey(&object, "age")->valueAsInt16 == 39);
 
 	freeJObject(&object);
 	free(fileContent);
@@ -141,9 +141,9 @@ START_TEST(multipleObjectTest)
 	ck_assert(CJ_getKey(user1, "afgestudeerd")->size == 0);
 	ck_assert(CJ_getKey(user1, "age")->size == 0);
 
-	ck_assert_str_eq(CJ_getKey(user1, "naam")->valueAsString, "Floris");
+	ck_assert_str_eq(CJ_getKey(user1, "naam")->valueAsString, "John Doe");
 	ck_assert(CJ_getKey(user1, "afgestudeerd")->valueAsBool == true);
-	ck_assert(CJ_getKey(user1, "age")->valueAsInt16 == 25);
+	ck_assert(CJ_getKey(user1, "age")->valueAsInt16 == 39);
 
 	JObject *user2 = CJ_getKey(&object, "user2");
 
@@ -159,9 +159,9 @@ START_TEST(multipleObjectTest)
 	ck_assert(CJ_getKey(user2, "afgestudeerd")->size == 0);
 	ck_assert(CJ_getKey(user2, "age")->size == 0);
 
-	ck_assert_str_eq(CJ_getKey(user2, "naam")->valueAsString, "Christiaan");
+	ck_assert_str_eq(CJ_getKey(user2, "naam")->valueAsString, "Jane Doe");
 	ck_assert(CJ_getKey(user2, "afgestudeerd")->valueAsBool == false);
-	ck_assert(CJ_getKey(user2, "age")->valueAsInt16 == 20);
+	ck_assert(CJ_getKey(user2, "age")->valueAsInt16 == 55);
 
 	freeJObject(&object);
 	free(fileContent);

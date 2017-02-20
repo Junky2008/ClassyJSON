@@ -1,8 +1,3 @@
-#-------------------------------------------------------------------------------
-#  Makefile for the Control Box application to build cb_app2
-#		Author: Bob Peters
-#-------------------------------------------------------------------------------
-
 CXX:=gcc
 CC:=gcc
 IDIR=inc
@@ -11,10 +6,6 @@ ODIR=obj
 SDIR=src
 
 #-------------------------------------------------------------------------------
-#-D_GNU_SOURCE is included for TEMP_FAILURE_RETRY
-# pthread used for multi threading and rt for Realtime extensions
-# dynlcms is the dynamic shared library for the custom specific LCMS behavior
-
 CHECK_DIR:= check
 
 CFLAGS+= -I./$(IDIR) -I./$(ILIB) -I../$(CHECK_DIR)/build/src -I../$(CHECK_DIR)/build -L../$(CHECK_DIR)/build/src -g -lcheck -lpthread -lrt -lm -Wall -O3
@@ -56,7 +47,7 @@ clean:
 #-------------------------------------------------------------------------------
 # target: classyjson  - builds classyjson
 classyjson: $(OBJECTS)
-	@echo  --- Building cb_app2_arm_16b AAA-LUX Controlbox Application with DEBUG_LEVEL=$(DBG_LVL) and routing=16b/macS ---
+	@echo  --- Building ClassyTest for X64 ---
 	$(CXX) $(patsubst $(SDIR)/%,$(ODIR)/%,$(OBJECTS)) -o ClassyTest $(CFLAGS) -L.. -lClassyJSON
 
 check:
