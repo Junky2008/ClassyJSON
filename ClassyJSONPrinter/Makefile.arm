@@ -1,8 +1,3 @@
-#-------------------------------------------------------------------------------
-#  Makefile for the Control Box application to build cb_app2
-#		Author: Bob Peters
-#-------------------------------------------------------------------------------
-
 CXX:=arm-linux-gnueabihf-gcc
 CC:=arm-linux-gnueabihf-gcc
 IDIR=inc
@@ -11,10 +6,6 @@ ODIR=obj
 SDIR=src
 
 #-------------------------------------------------------------------------------
-#-D_GNU_SOURCE is included for TEMP_FAILURE_RETRY
-# pthread used for multi threading and rt for Realtime extensions
-# dynlcms is the dynamic shared library for the custom specific LCMS behavior
-
 CFLAGS+= -I./$(IDIR) -I./$(ILIB) -Wall
 
 SOURCES := $(wildcard $(SDIR)/*.c)
@@ -54,5 +45,5 @@ clean:
 #-------------------------------------------------------------------------------
 # target: classyjsonprinter  - builds classyjsonprinter
 classyjsonprinter: $(OBJECTS)
-	@echo  --- Building cb_app2_arm_16b AAA-LUX Controlbox Application with DEBUG_LEVEL=$(DBG_LVL) and routing=16b/macS ---
+	@echo  --- Building ClassyJSONPrinter for ARM ---
 	$(CXX) $(patsubst $(SDIR)/%,$(ODIR)/%,$(OBJECTS)) -o ClassyJSONPrinter $(CFLAGS) -L.. -lClassyJSON
