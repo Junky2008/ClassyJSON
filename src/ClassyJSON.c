@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 /**
  * Public Functions (declared in ClassyJSON.h)
@@ -269,4 +270,102 @@ void readEmptyChars(char **data, bool includeComma)
 	{
 		(*data)++;
 	}
+}
+
+
+bool CJ_addKeyInt(JObject *object, char *key, int keyLength, long value)
+{
+	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+	char *stringValue = (char *)malloc((d) * sizeof(char));
+	sprintf(stringValue, "%d", (unsigned int)value);
+	return CJ_addKeyString(object, key, keyLength, stringValue, d);
+}
+
+bool CJ_addKeyHex(JObject *object, char *key, int keyLength, unsigned long value)
+{
+	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+	char *stringValue = (char *)malloc((d) * sizeof(char));
+	memset(stringValue, '\0', sizeof(stringValue));
+	sprintf(stringValue, "%X", (unsigned int)value);
+	return CJ_addKeyString(object, key, keyLength, stringValue, d);
+}
+
+bool CJ_addKeyBool(JObject *object, char *key, int keyLength, bool value)
+{
+	if (value)
+	{
+		return CJ_addKeyString(object, key, keyLength, "true", 4);
+	}
+	else
+	{
+		return CJ_addKeyString(object, key, keyLength, "true", 5);
+	}
+}
+
+bool CJ_addKeyString(JObject *object, char *key, int keyLength, char *value, int length)
+{
+	if (object->isArray || CJ_exists(object, key))
+	{
+		return false;
+	}
+	object->isObject = true;
+	int size = (sizeof(JObject) * (object->size + 1));
+	object->objects = (JObject *)realloc(object->objects, sizeof(JObject) * (object->size + 1));
+	initObject(&object->objects[object->size]);
+	object->objects[object->size].key = (char *)malloc(sizeof(char) * (keyLength + 1));
+	memset(object->objects[object->size].key, '\0', sizeof(object->objects[object->size].key));
+	strncpy(object->objects[object->size].key, key, keyLength);
+	object->objects[object->size].valueAsString = (char*)malloc(sizeof(char) * (length + 1));
+	memset(object->objects[object->size].valueAsString, '\0', sizeof(object->objects[object->size].valueAsString));
+	strncpy(object->objects[object->size].valueAsString, value, length);
+	parseData(object->objects[object->size].valueAsString, &object->objects[object->size].valueAsInt16, &object->objects[object->size].valueAsHex, &object->objects[object->size].valueAsBool);
+	object->size++;
+	return true;
+}
+
+bool CJ_addInt(JObject *object, long value)
+{
+	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+	char *stringValue = (char *)malloc((d) * sizeof(char));
+	sprintf(stringValue, "%d", (unsigned int)value);
+	return CJ_addString(object, stringValue, d);
+}
+
+bool CJ_addHex(JObject *object, unsigned long value)
+{
+	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+	char *stringValue = (char *)malloc((d) * sizeof(char));
+	memset(stringValue, '\0', sizeof(stringValue));
+	sprintf(stringValue, "%X", (unsigned int)value);
+	return CJ_addString(object, stringValue, d);
+}
+
+bool CJ_addBool(JObject *object, bool value)
+{
+	if (value)
+	{
+		return CJ_addString(object, "true", 4);
+	}
+	else
+	{
+		return CJ_addString(object, "true", 5);
+	}
+}
+
+bool CJ_addString(JObject *object, char *value, int length)
+{
+	if (object->isObject)
+	{
+		return false;
+	}
+	object->isArray = true;
+	int size = (sizeof(JObject) * (object->size + 1));
+	object->objects = (JObject *)realloc(object->objects, sizeof(JObject) * (object->size + 1));
+	initObject(&object->objects[object->size]);
+	object->objects[object->size].valueAsString = (char*)malloc(sizeof(char) * (length + 1));
+	memset(object->objects[object->size].valueAsString, '\0', sizeof(object->objects[object->size].valueAsString));
+	strncpy(object->objects[object->size].valueAsString, value, length);
+	parseData(object->objects[object->size].valueAsString, &object->objects[object->size].valueAsInt16, &object->objects[object->size].valueAsHex, &object->objects[object->size].valueAsBool);
+	object->size++;
+	return true;
 }

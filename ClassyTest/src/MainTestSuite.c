@@ -355,6 +355,109 @@ START_TEST(recursiveTest)
 }
 END_TEST
 
+START_TEST(addKeysTest)
+{
+	bool ret;
+	JObject object;
+	object.isArray = false;
+	object.isObject = false;
+	object.objects = NULL;
+	object.size = 0;
+	object.valueAsBool = false;
+	object.valueAsHex = 0;
+	object.valueAsInt16 = 0;
+	object.valueAsString = NULL;
+	object.key = NULL;
+	ret = CJ_addKeyString(&object, "test", 4, "Test", 4);
+
+	ck_assert(ret);
+	ck_assert(object.isObject);
+	ck_assert(!object.isArray);
+	ck_assert(object.size == 1);
+	ck_assert(CJ_exists(&object, "test"));
+	ck_assert(strstr(CJ_getKey(&object, "test")->valueAsString, "Test") != NULL);
+
+	ret = CJ_addString(&object, "Test", 4);
+	ck_assert(!ret);
+	ck_assert(object.size == 1);
+
+	ret = CJ_addKeyString(&object, "second", 6, "second", 6);
+	ck_assert(ret);
+	ck_assert(object.size == 2);
+	ck_assert(CJ_exists(&object, "second"));
+	ck_assert(strstr(CJ_getKey(&object, "second")->valueAsString, "second") != NULL);
+
+	ret = CJ_addKeyString(&object, "test", 4, "Test", 4);
+	ck_assert(!ret);
+	ck_assert(object.size == 2);
+
+	ret = CJ_addKeyHex(&object, "hex", 3, 0xABB);
+	ck_assert(ret);
+	ck_assert(object.size == 3);
+	ck_assert(CJ_exists(&object, "hex"));
+	ck_assert(CJ_getKey(&object, "hex")->valueAsHex == 0xABB);
+
+	ret = CJ_addKeyBool(&object, "bool", 4, true);
+	ck_assert(ret);
+	ck_assert(object.size == 4);
+	ck_assert(CJ_exists(&object, "bool"));
+	ck_assert(CJ_getKey(&object, "bool")->valueAsBool);
+
+	ret = CJ_addKeyInt(&object, "int", 3, 660);
+	ck_assert(ret);
+	ck_assert(object.size == 5);
+	ck_assert(CJ_exists(&object, "int"));
+	ck_assert(CJ_getKey(&object, "int")->valueAsInt16 == 660);
+}
+END_TEST
+
+START_TEST(addTest)
+{
+	bool ret;
+	JObject object;
+	object.isArray = false;
+	object.isObject = false;
+	object.objects = NULL;
+	object.size = 0;
+	object.valueAsBool = false;
+	object.valueAsHex = 0;
+	object.valueAsInt16 = 0;
+	object.valueAsString = NULL;
+	object.key = NULL;
+	ret = CJ_addString(&object, "Test", 4);
+
+	ck_assert(ret);
+	ck_assert(!object.isObject);
+	ck_assert(object.isArray);
+	ck_assert(object.size == 1);
+	ck_assert(strstr(CJ_getIndex(&object, 0)->valueAsString, "Test") != NULL);
+
+	ret = CJ_addKeyString(&object, "test", 4, "Test", 4);
+	ck_assert(!ret);
+	ck_assert(object.size == 1);
+
+	ret = CJ_addString(&object, "second", 6);
+	ck_assert(ret);
+	ck_assert(object.size == 2);
+	ck_assert(strstr(CJ_getIndex(&object, 1)->valueAsString, "second") != NULL);
+
+	ret = CJ_addHex(&object, 0xABB);
+	ck_assert(ret);
+	ck_assert(object.size == 3);
+	ck_assert(CJ_getIndex(&object, 2)->valueAsHex == 0xABB);
+
+	ret = CJ_addBool(&object, true);
+	ck_assert(ret);
+	ck_assert(object.size == 4);
+	ck_assert(CJ_getIndex(&object, 3)->valueAsBool);
+
+	ret = CJ_addInt(&object, 660);
+	ck_assert(ret);
+	ck_assert(object.size == 5);
+	ck_assert(CJ_getIndex(&object, 4)->valueAsInt16 == 660);
+}
+END_TEST
+
 Suite* GetMainTestSuite(void)
 {
 	Suite *s;
@@ -371,6 +474,8 @@ Suite* GetMainTestSuite(void)
 	tcase_add_test(tc_core, recursiveArrayTest);
 	tcase_add_test(tc_core, recursiveObjectTest);
 	tcase_add_test(tc_core, recursiveTest);
+	tcase_add_test(tc_core, addKeysTest);
+	tcase_add_test(tc_core, addTest);
 	suite_add_tcase(s, tc_core);
 
 	return s;

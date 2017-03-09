@@ -45,4 +45,43 @@ JObject *CJ_getKey(JObject *object, const char *key);
  */
 JObject *CJ_getIndex(JObject *object, int i);
 
+/**
+*
+*/
+bool CJ_addKeyInt(JObject *object, char *key, int keyLength, long value);
+
+/**
+*
+*/
+bool CJ_addKeyHex(JObject *object, char *key, int keyLength, unsigned long value);
+
+/**
+*
+*/
+bool CJ_addKeyBool(JObject *object, char *key, int keyLength, bool value);
+
+/**
+*
+*/
+bool CJ_addKeyString(JObject *object, char *key, int keyLength, char *value, int length);
+/**
+*
+*/
+bool CJ_addInt(JObject *object, long value);
+
+/**
+*
+*/
+bool CJ_addHex(JObject *object, unsigned long value);
+
+/**
+*
+*/
+bool CJ_addBool(JObject *object, bool value);
+
+/**
+*
+*/
+bool CJ_addString(JObject *object, char *value, int length);
+
 #endif //__CLASSYJSON_H__
