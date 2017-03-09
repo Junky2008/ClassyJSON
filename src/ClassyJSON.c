@@ -156,7 +156,8 @@ void getKeyValuePair(char **data, JObject *object)
 {
 	if (getItem(data, &object->key) != 0)
 	{
-		printf("error\n");
+		printf("KV1: error (%c)\n", (*data)[0]);
+		(*data)++;
 		return;
 	}
 
@@ -177,7 +178,8 @@ void getKeyValuePair(char **data, JObject *object)
 		}
 		else
 		{
-			printf("error\n");
+			printf("KV2: error (%c)\n", (*data)[0]);
+			(*data)++;
 			return;
 		}
 	}
@@ -213,7 +215,8 @@ void getArray(char **data, JObject *object)
 			}
 			else
 			{
-				printf("error\n");
+				printf("AR: error (%c)\n", (*data)[0]);
+				(*data)++;
 				return;
 			}
 		}
