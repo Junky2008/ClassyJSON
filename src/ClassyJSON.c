@@ -118,8 +118,8 @@ int getItem(char **data, char **item)
 			start++;
 			char *end = strstr(start, "\"");
 			*item = (char*)malloc(sizeof(char) * ((end - start) + 1));
+			memset(*item, '\0', sizeof(*item));
 			strncpy(*item, start, end - start);
-			(*item)[end - start] = '\0';
 			(*data) = ++end;
 			readEmptyChars(data, false);
 			return 0;
@@ -135,8 +135,8 @@ int getItem(char **data, char **item)
 			char *end = findOneOf(start, ", \n\r]}\0");
 
 			*item = (char*)malloc(sizeof(char) * ((end - start) + 1));
+			memset(*item, '\0', sizeof(*item));
 			strncpy(*item, start, end - start);
-			(*item)[end - start] = '\0';
 			if (end[0] == ']' || end[0] == '}')
 			{
 				end--;
@@ -252,6 +252,7 @@ void parseData(char *string, long *integer, long *hex, bool *boolean)
 	*integer = (long)strtol(string, NULL, 10);
 	*hex = (long)strtol(string, NULL, 16);
 	char *str = (char *)malloc(sizeof(char) * strlen(string));
+	memset(str, '\0', sizeof(str));
 	strcpy(str, string);
 	int i;
 	for (i = 0; str[i]; i++) {
@@ -278,19 +279,21 @@ void readEmptyChars(char **data, bool includeComma)
 
 bool CJ_addKeyInt(JObject *object, char *key, int keyLength, long value)
 {
-	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
-	char *stringValue = (char *)malloc((d) * sizeof(char));
-	sprintf(stringValue, "%d", (unsigned int)value);
-	return CJ_addKeyString(object, key, keyLength, stringValue, d);
+//	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+//	char *stringValue = (char *)malloc((d) * sizeof(char));
+//	sprintf(stringValue, "%d", (unsigned int)value);
+//	return CJ_addKeyString(object, key, keyLength, stringValue, d);
+	return false;
 }
 
 bool CJ_addKeyHex(JObject *object, char *key, int keyLength, unsigned long value)
 {
-	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
-	char *stringValue = (char *)malloc((d) * sizeof(char));
-	memset(stringValue, '\0', sizeof(stringValue));
-	sprintf(stringValue, "%X", (unsigned int)value);
-	return CJ_addKeyString(object, key, keyLength, stringValue, d);
+//	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+//	char *stringValue = (char *)malloc((d) * sizeof(char));
+//	memset(stringValue, '\0', sizeof(stringValue));
+//	sprintf(stringValue, "%X", (unsigned int)value);
+//	return CJ_addKeyString(object, key, keyLength, stringValue, d);
+	return false;
 }
 
 bool CJ_addKeyBool(JObject *object, char *key, int keyLength, bool value)
@@ -328,19 +331,21 @@ bool CJ_addKeyString(JObject *object, char *key, int keyLength, char *value, int
 
 bool CJ_addInt(JObject *object, long value)
 {
-	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
-	char *stringValue = (char *)malloc((d) * sizeof(char));
-	sprintf(stringValue, "%d", (unsigned int)value);
-	return CJ_addString(object, stringValue, d);
+//	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+//	char *stringValue = (char *)malloc((d) * sizeof(char));
+//	sprintf(stringValue, "%d", (unsigned int)value);
+//	return CJ_addString(object, stringValue, d);
+	return false;
 }
 
 bool CJ_addHex(JObject *object, unsigned long value)
 {
-	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
-	char *stringValue = (char *)malloc((d) * sizeof(char));
-	memset(stringValue, '\0', sizeof(stringValue));
-	sprintf(stringValue, "%X", (unsigned int)value);
-	return CJ_addString(object, stringValue, d);
+//	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+//	char *stringValue = (char *)malloc((d) * sizeof(char));
+//	memset(stringValue, '\0', sizeof(stringValue));
+//	sprintf(stringValue, "%X", (unsigned int)value);
+//	return CJ_addString(object, stringValue, d);
+	return false;
 }
 
 bool CJ_addBool(JObject *object, bool value)

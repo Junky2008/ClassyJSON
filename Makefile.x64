@@ -1,5 +1,6 @@
 CXX:=gcc
 CC:=gcc
+AR:=ar
 IDIR=inc
 ODIR=obj
 SDIR=src
@@ -34,7 +35,7 @@ help:
 #-------------------------------------------------------------------------------
 # target: clean	  - removes the binary and .o files
 clean:
-	rm -f $(ODIR)/*.o *~ libClassyJSON.so
+	rm -f $(ODIR)/*.o *~ libClassyJSON.a
 	
 #-------------------------------------------------------------------------------
 # target: *.o	  - compile the c files to o files
@@ -45,4 +46,4 @@ clean:
 # target: classyjson  - builds classyjson
 classyjson: $(OBJECTS)
 	@echo  --- Building ClassyJSON shared library for X64 ---
-	$(CXX) $(patsubst $(SDIR)/%,$(ODIR)/%,$(OBJECTS)) -o libClassyJSON.so $(CFLAGS) -shared
+	$(AR) rcs libClassyJSON.a $(patsubst $(SDIR)/%,$(ODIR)/%,$(OBJECTS))
