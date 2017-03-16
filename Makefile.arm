@@ -7,7 +7,7 @@ SDIR=src
 
 #-------------------------------------------------------------------------------
 
-CFLAGS+= -I./$(IDIR) -fPIC -O3 -lm -DDEBUG_LEVEL=3
+CFLAGS+= -I./$(IDIR) -fPIC -O3 -lm -DDEBUG_LEVEL=6
 
 LDFLAGS+= -shared
 

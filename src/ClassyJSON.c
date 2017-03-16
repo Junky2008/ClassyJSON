@@ -12,7 +12,7 @@
  */
 void CJ_parse(char *JSONdata, JObject *object)
 {
-	LOG(LOG_DEBUG, "CJ_parse");
+	LOG(LOG_INFO, "CJ_parse");
 	if (JSONdata[0] != '{')
 	{
 		LOG(LOG_ERR, "Error\n");
@@ -91,7 +91,7 @@ char *findOneOf(char *haystack, char *needles)
 
 void initObject(JObject *object)
 {
-	LOG(LOG_DEBUG, "initObject");
+	//LOG(LOG_DEBUG, "initObject");
 	object->isObject = false;
 	object->isArray = false;
 	object->key = NULL;
@@ -162,7 +162,7 @@ int getItem(char **data, char **item)
 
 void getKeyValuePair(char **data, JObject *object)
 {
-	LOG(LOG_DEBUG, "getKeyValuePair");
+	LOG(LOG_INFO, "getKeyValuePair");
 	if (getItem(data, &object->key) != 0)
 	{
 		LOG(LOG_ERR, "KV1: error (%c)\n", (*data)[0]);
