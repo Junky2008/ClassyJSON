@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ClassyJSON.h"
+#include "debug.h"
 
 void freeJObject(JObject *object)
 {
@@ -55,6 +56,7 @@ char *openJSONFile(char *filename)
 
 START_TEST(simpleObjectTest)
 {
+	LOG(LOG_ALERT, "--- SimpleObjectTest ---");
 	char *fileContent = openJSONFile("./test/SimpleObjectTest.json");
 
 	JObject object;
@@ -70,7 +72,7 @@ START_TEST(simpleObjectTest)
 	ck_assert(CJ_getKey(&object, "work")->size == 0);
 	ck_assert(CJ_getKey(&object, "age")->isObject == false);
 	ck_assert(CJ_getKey(&object, "age")->size == 0);
-
+	
 	ck_assert_str_eq(CJ_getKey(&object, "naam")->valueAsString, "Jane Doe");
 	ck_assert_str_eq(CJ_getKey(&object, "work")->valueAsString, "Example.org");
 	ck_assert(CJ_getKey(&object, "age")->valueAsInt16 == 39);
@@ -78,11 +80,13 @@ START_TEST(simpleObjectTest)
 	freeJObject(&object);
 	free(fileContent);
 	fileContent = NULL;
+	LOG(LOG_ALERT, "--- OK ---");
 }
 END_TEST
 
 START_TEST(simpleArrayTest)
 {
+	LOG(LOG_ALERT, "--- SimpleArrayTest ---");
 	char *fileContent = openJSONFile("./test/SimpleArrayTest.json");
 
 	JObject object;
@@ -108,11 +112,13 @@ START_TEST(simpleArrayTest)
 	freeJObject(&object);
 	free(fileContent);
 	fileContent = NULL;
+	LOG(LOG_ALERT, "--- OK ---");
 }
 END_TEST
 
 START_TEST(multipleObjectTest)
 {
+	LOG(LOG_ALERT, "--- MultipleObjectTest ---");
 	char *fileContent = openJSONFile("./test/MultipleObjectTest.json");
 	
 	JObject object;
@@ -166,11 +172,13 @@ START_TEST(multipleObjectTest)
 	freeJObject(&object);
 	free(fileContent);
 	fileContent = NULL;
+	LOG(LOG_ALERT, "--- OK ---");
 }
 END_TEST
 
 START_TEST(recursiveArrayTest)
 {
+	LOG(LOG_ALERT, "--- RecursiveArrayTest ---");
 	char *fileContent = openJSONFile("./test/RecursiveArrayTest.json");
 
 	JObject object;
@@ -205,11 +213,13 @@ START_TEST(recursiveArrayTest)
 	freeJObject(&object);
 	free(fileContent);
 	fileContent = NULL;
+	LOG(LOG_ALERT, "--- OK ---");
 }
 END_TEST
 
 START_TEST(recursiveObjectTest)
 {
+	LOG(LOG_ALERT, "--- RecursiveObjectTest ---");
 	char *fileContent = openJSONFile("./test/RecursiveObjectTest.json");
 
 	JObject object;
@@ -266,11 +276,13 @@ START_TEST(recursiveObjectTest)
 	freeJObject(&object);
 	free(fileContent);
 	fileContent = NULL;
+	LOG(LOG_ALERT, "--- OK ---");
 }
 END_TEST
 
 START_TEST(recursiveTest)
 {
+	LOG(LOG_ALERT, "--- RecursiveTest ---");
 	char *fileContent = openJSONFile("./test/RecursiveTest.json");
 
 	JObject object;
@@ -352,11 +364,16 @@ START_TEST(recursiveTest)
 	ck_assert(CJ_getKey(ObjectinArrayinObject, "ObjectinArrayinObject")->valueAsBool == true);
 	ck_assert(CJ_getKey(ObjectinArrayinObject, "data")->valueAsInt16 == 10);
 
+	freeJObject(&object);
+	free(fileContent);
+	fileContent = NULL;
+	LOG(LOG_ALERT, "--- OK ---");
 }
 END_TEST
 
 START_TEST(addKeysTest)
 {
+	LOG(LOG_ALERT, "--- AddKeysTest ---");
 	bool ret;
 	JObject object;
 	object.isArray = false;
@@ -408,11 +425,15 @@ START_TEST(addKeysTest)
 	ck_assert(object.size == 5);
 	ck_assert(CJ_exists(&object, "int"));
 	ck_assert(CJ_getKey(&object, "int")->valueAsInt16 == 660);
+	
+	freeJObject(&object);
+	LOG(LOG_ALERT, "--- OK ---");
 }
 END_TEST
 
 START_TEST(addTest)
 {
+	LOG(LOG_ALERT, "--- AddTest ---");
 	bool ret;
 	JObject object;
 	object.isArray = false;
@@ -429,6 +450,7 @@ START_TEST(addTest)
 	ck_assert(ret);
 	ck_assert(!object.isObject);
 	ck_assert(object.isArray);
+	ck_assert(object.size == 1);
 	ck_assert(object.size == 1);
 	ck_assert(strstr(CJ_getIndex(&object, 0)->valueAsString, "Test") != NULL);
 
@@ -455,6 +477,9 @@ START_TEST(addTest)
 	ck_assert(ret);
 	ck_assert(object.size == 5);
 	ck_assert(CJ_getIndex(&object, 4)->valueAsInt16 == 660);
+	
+	freeJObject(&object);
+	LOG(LOG_ALERT, "--- OK ---");
 }
 END_TEST
 

@@ -2,6 +2,7 @@
 #define __CLASSYJSON_H__
 
 #include <stdbool.h>
+#include <math.h>
 /**
  * The JObject structure defines a JObject.
  * A JObject can be an Array, an Object or just a simple value.

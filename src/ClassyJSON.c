@@ -1,5 +1,6 @@
 #include "ClassyJSON.h"
 #include "ClassyJSON_private.h"
+#include "debug.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -11,9 +12,10 @@
  */
 void CJ_parse(char *JSONdata, JObject *object)
 {
+	LOG(LOG_DEBUG, "CJ_parse");
 	if (JSONdata[0] != '{')
 	{
-		printf("Error\n");
+		LOG(LOG_ERR, "Error\n");
 		object = NULL;
 		return;
 	}
@@ -26,6 +28,7 @@ void CJ_parse(char *JSONdata, JObject *object)
 
 bool CJ_exists(JObject *object, const char *key)
 {
+	LOG(LOG_DEBUG, "CJ_exists");
 	int i;
 	for (i = 0; i < object->size; i++)
 	{
@@ -39,6 +42,7 @@ bool CJ_exists(JObject *object, const char *key)
 
 JObject *CJ_getKey(JObject *object, const char *key)
 {
+	LOG(LOG_DEBUG, "CJ_getKey");
 	int i;
 	for (i = 0; i < object->size; i++)
 	{
@@ -52,6 +56,7 @@ JObject *CJ_getKey(JObject *object, const char *key)
 
 JObject *CJ_getIndex(JObject *object, int i)
 {
+	LOG(LOG_DEBUG, "CJ_getIndex");
 	if (i < object->size)
 	{
 		return &(object->objects[i]);
@@ -64,6 +69,7 @@ JObject *CJ_getIndex(JObject *object, int i)
  */
 char *findOneOf(char *haystack, char *needles)
 {
+	LOG(LOG_DEBUG, "findOneOf");
 	char *firstNeedle = needles;
 	while (*haystack)
 	{
@@ -85,6 +91,7 @@ char *findOneOf(char *haystack, char *needles)
 
 void initObject(JObject *object)
 {
+	LOG(LOG_DEBUG, "initObject");
 	object->isObject = false;
 	object->isArray = false;
 	object->key = NULL;
@@ -98,6 +105,7 @@ void initObject(JObject *object)
 
 int getItem(char **data, char **item)
 {
+	LOG(LOG_DEBUG, "getItem");
 	int i;
 
 	for (i = 0; i < strlen(*data); i++)
@@ -118,7 +126,7 @@ int getItem(char **data, char **item)
 			start++;
 			char *end = strstr(start, "\"");
 			*item = (char*)malloc(sizeof(char) * ((end - start) + 1));
-			memset(*item, '\0', sizeof(*item));
+			memset(*item, '\0', (end - start) + 1);
 			strncpy(*item, start, end - start);
 			(*data) = ++end;
 			readEmptyChars(data, false);
@@ -135,7 +143,7 @@ int getItem(char **data, char **item)
 			char *end = findOneOf(start, ", \n\r]}\0");
 
 			*item = (char*)malloc(sizeof(char) * ((end - start) + 1));
-			memset(*item, '\0', sizeof(*item));
+			memset(*item, '\0', (end - start) + 1);
 			strncpy(*item, start, end - start);
 			if (end[0] == ']' || end[0] == '}')
 			{
@@ -154,9 +162,10 @@ int getItem(char **data, char **item)
 
 void getKeyValuePair(char **data, JObject *object)
 {
+	LOG(LOG_DEBUG, "getKeyValuePair");
 	if (getItem(data, &object->key) != 0)
 	{
-		printf("KV1: error (%c)\n", (*data)[0]);
+		LOG(LOG_ERR, "KV1: error (%c)\n", (*data)[0]);
 		(*data)++;
 		return;
 	}
@@ -178,7 +187,7 @@ void getKeyValuePair(char **data, JObject *object)
 		}
 		else
 		{
-			printf("KV2: error (%c)\n", (*data)[0]);
+			LOG(LOG_ERR, "KV2: error (%c)\n", (*data)[0]);
 			(*data)++;
 			return;
 		}
@@ -191,6 +200,7 @@ void getKeyValuePair(char **data, JObject *object)
 
 void getArray(char **data, JObject *object)
 {
+	LOG(LOG_DEBUG, "getArray");
 	if ((*data)[0] == '[')
 		(*data)++;
 	while ((*data)[0] != ']')
@@ -215,7 +225,7 @@ void getArray(char **data, JObject *object)
 			}
 			else
 			{
-				printf("AR: error (%c)\n", (*data)[0]);
+				LOG(LOG_ERR, "AR: error (%c)\n", (*data)[0]);
 				(*data)++;
 				return;
 			}
@@ -233,6 +243,7 @@ void getArray(char **data, JObject *object)
 
 void getObject(char **data, JObject *object)
 {
+	LOG(LOG_DEBUG, "getObject");
 	if ((*data)[0] == '{')
 		(*data)++;
 	while ((*data)[0] != '}')
@@ -249,6 +260,7 @@ void getObject(char **data, JObject *object)
 
 void parseData(char *string, long *integer, long *hex, bool *boolean)
 {
+	LOG(LOG_DEBUG, "parseData");
 	*integer = (long)strtol(string, NULL, 10);
 	*hex = (long)strtol(string, NULL, 16);
 	char *str = (char *)malloc(sizeof(char) * strlen(string));
@@ -270,6 +282,7 @@ void parseData(char *string, long *integer, long *hex, bool *boolean)
 
 void readEmptyChars(char **data, bool includeComma)
 {
+	LOG(LOG_DEBUG, "readEmptyChars");
 	while ((*data)[0] == ' ' || (*data)[0] == '\t' || (*data)[0] == '\n' || (*data)[0] == '\r' || (includeComma && (*data)[0] == ','))
 	{
 		(*data)++;
@@ -279,25 +292,28 @@ void readEmptyChars(char **data, bool includeComma)
 
 bool CJ_addKeyInt(JObject *object, char *key, int keyLength, long value)
 {
-//	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
-//	char *stringValue = (char *)malloc((d) * sizeof(char));
-//	sprintf(stringValue, "%d", (unsigned int)value);
-//	return CJ_addKeyString(object, key, keyLength, stringValue, d);
+	LOG(LOG_DEBUG, "CJ_addKeyInt");
+	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+	char *stringValue = (char *)malloc((d) * sizeof(char));
+	sprintf(stringValue, "%d", (unsigned int)value);
+	return CJ_addKeyString(object, key, keyLength, stringValue, d);
 	return false;
 }
 
 bool CJ_addKeyHex(JObject *object, char *key, int keyLength, unsigned long value)
 {
-//	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
-//	char *stringValue = (char *)malloc((d) * sizeof(char));
-//	memset(stringValue, '\0', sizeof(stringValue));
-//	sprintf(stringValue, "%X", (unsigned int)value);
-//	return CJ_addKeyString(object, key, keyLength, stringValue, d);
+	LOG(LOG_DEBUG, "CJ_addKeyHex");
+	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+	char *stringValue = (char *)malloc((d) * sizeof(char));
+	memset(stringValue, '\0', sizeof(stringValue));
+	sprintf(stringValue, "%X", (unsigned int)value);
+	return CJ_addKeyString(object, key, keyLength, stringValue, d);
 	return false;
 }
 
 bool CJ_addKeyBool(JObject *object, char *key, int keyLength, bool value)
 {
+	LOG(LOG_DEBUG, "CJ_addKeyBool");
 	if (value)
 	{
 		return CJ_addKeyString(object, key, keyLength, "true", 4);
@@ -310,6 +326,7 @@ bool CJ_addKeyBool(JObject *object, char *key, int keyLength, bool value)
 
 bool CJ_addKeyString(JObject *object, char *key, int keyLength, char *value, int length)
 {
+	LOG(LOG_DEBUG, "CJ_addKeyString");
 	if (object->isArray || CJ_exists(object, key))
 	{
 		return false;
@@ -331,25 +348,28 @@ bool CJ_addKeyString(JObject *object, char *key, int keyLength, char *value, int
 
 bool CJ_addInt(JObject *object, long value)
 {
-//	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
-//	char *stringValue = (char *)malloc((d) * sizeof(char));
-//	sprintf(stringValue, "%d", (unsigned int)value);
-//	return CJ_addString(object, stringValue, d);
+	LOG(LOG_DEBUG, "CJ_addInt");
+	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+	char *stringValue = (char *)malloc((d) * sizeof(char));
+	sprintf(stringValue, "%d", (unsigned int)value);
+	return CJ_addString(object, stringValue, d);
 	return false;
 }
 
 bool CJ_addHex(JObject *object, unsigned long value)
 {
-//	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
-//	char *stringValue = (char *)malloc((d) * sizeof(char));
-//	memset(stringValue, '\0', sizeof(stringValue));
-//	sprintf(stringValue, "%X", (unsigned int)value);
-//	return CJ_addString(object, stringValue, d);
+	LOG(LOG_DEBUG, "CJ_addHex");
+	int d = (value == 0 ? 1 : ((int)(log10(fabs(value)) + 1) + (value < 0 ? 1 : 0)));
+	char *stringValue = (char *)malloc((d) * sizeof(char));
+	memset(stringValue, '\0', sizeof(stringValue));
+	sprintf(stringValue, "%X", (unsigned int)value);
+	return CJ_addString(object, stringValue, d);
 	return false;
 }
 
 bool CJ_addBool(JObject *object, bool value)
 {
+	LOG(LOG_DEBUG, "CJ_addBool");
 	if (value)
 	{
 		return CJ_addString(object, "true", 4);
@@ -362,6 +382,7 @@ bool CJ_addBool(JObject *object, bool value)
 
 bool CJ_addString(JObject *object, char *value, int length)
 {
+	LOG(LOG_DEBUG, "CJ_addString");
 	if (object->isObject)
 	{
 		return false;

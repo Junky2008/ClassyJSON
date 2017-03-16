@@ -46,4 +46,4 @@ clean:
 # target: classyjsonprinter  - builds classyjsonprinter
 classyjsonprinter: $(OBJECTS)
 	@echo  --- Building ClassyJSONPrinter for X64 ---
-	$(CXX) $(patsubst $(SDIR)/%,$(ODIR)/%,$(OBJECTS)) -o ClassyJSONPrinter $(CFLAGS) -L.. -lClassyJSON
+	$(CXX) $(patsubst $(SDIR)/%,$(ODIR)/%,$(OBJECTS)) -o ClassyJSONPrinter $(CFLAGS) -L.. -lClassyJSON -lm

@@ -8,7 +8,7 @@ SDIR=src
 #-------------------------------------------------------------------------------
 CHECK_DIR:= check
 
-CFLAGS+= -I./$(IDIR) -I./$(ILIB) -I../$(CHECK_DIR)/build/src -I../$(CHECK_DIR)/build -L../$(CHECK_DIR)/build/src -g -lcheck -lpthread -lrt -lm -Wall -O3
+CFLAGS+= -I./$(IDIR) -I./$(ILIB) -I../$(CHECK_DIR)/build/src -I../$(CHECK_DIR)/build -L../$(CHECK_DIR)/build/src -g -lcheck -lpthread -lrt -lm -Wall -O3 -DTEST
 
 SOURCES := $(wildcard $(SDIR)/*.c)
 

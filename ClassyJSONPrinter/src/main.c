@@ -56,6 +56,7 @@ char *openJSONFile(char *filename)
 	fseek(fp, 0, SEEK_END);
 	// Offset from the first to the last byte, or in other words, filesize
 	string_size = ftell(fp);
+	printf("size: %d\n", string_size);
 	// go back to the start of the file
 	rewind(fp);
 
@@ -63,11 +64,13 @@ char *openJSONFile(char *filename)
 
 	int i = 0;
 	char ch;
-	while ((ch = fgetc(fp)) != EOF)
+	while ((ch = fgetc(fp)) != EOF && i < string_size)
 	{
 		fileContent[i] = ch;
 		i++;
+	printf("i: %d\n", i);
 	}
+	printf("content: %s\n", fileContent);
 	fileContent[i] = '\0';
 
 	fclose(fp);
@@ -199,12 +202,14 @@ int handleInput(char *input)
 
 int main(int argc, char** argv)
 {
+	printf("start\n");
 	if (argc < 2)
 	{
 		printHelp();
 		return 0;
 	}
 
+	printf("start\n");
 	if (argc > 2)
 	{
 		int i = 0;
@@ -222,17 +227,24 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
+	printf("open\n");
 	char* JSONdata = openJSONFile(argv[argc - 1]);
-
-	JObject object;
-	CJ_parse(JSONdata, &object);
+	printf("data: [%s]\n", JSONdata);
 	
+	JObject object;
+	printf("parse\n");
+	CJ_parse(JSONdata, &object);
+	printf("parsed\n");
+	
+	printf("print\n");
 	printJObject(&object);
 
+	printf("exit\n");
 	freeJObject(&object);
 	
 	free(JSONdata);
 	JSONdata = NULL;
 	
+	printf("done\n");
 	return 0;
 }

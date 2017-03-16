@@ -6,7 +6,9 @@ ODIR=obj
 SDIR=src
 
 #-------------------------------------------------------------------------------
-CFLAGS+= -I./$(IDIR) -fPIC -O3 -m32
+CFLAGS+= -I./$(IDIR) -fPIC -O3 -lm -m32 -DDEBUG_LEVEL=3
+
+LDFLAGS+= -shared -m32
 
 SOURCES := $(wildcard $(SDIR)/*.c)
 
@@ -35,7 +37,7 @@ help:
 #-------------------------------------------------------------------------------
 # target: clean	  - removes the binary and .o files
 clean:
-	rm -f $(ODIR)/*.o *~ libClassyJSON.a
+	rm -f $(ODIR)/*.o *~ libClassyJSON.so
 	
 #-------------------------------------------------------------------------------
 # target: *.o	  - compile the c files to o files
@@ -46,4 +48,4 @@ clean:
 # target: classyjson  - builds classyjson
 classyjson: $(OBJECTS)
 	@echo  --- Building ClassyJSON shared library for X86 ---
-	$(AR) rcs libClassyJSON.a $(patsubst $(SDIR)/%,$(ODIR)/%,$(OBJECTS))
+	$(CC) -o libClassyJSON.so $(patsubst $(SDIR)/%,$(ODIR)/%,$(OBJECTS)) $(LDFLAGS)
