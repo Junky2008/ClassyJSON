@@ -261,8 +261,8 @@ void getObject(char **data, JObject *object)
 void parseData(char *string, long *integer, long *hex, bool *boolean)
 {
 	LOG(LOG_DEBUG, "parseData");
-	*integer = (long)strtol(string, NULL, 10);
-	*hex = (long)strtol(string, NULL, 16);
+	*integer = (long)strtoul(string, NULL, 10);
+	*hex = (long)strtoul(string, NULL, 16);
 	char *str = (char *)malloc(sizeof(char) * strlen(string));
 	memset(str, '\0', sizeof(str));
 	strcpy(str, string);
