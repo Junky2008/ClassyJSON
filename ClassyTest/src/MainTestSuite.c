@@ -5,21 +5,6 @@
 #include "ClassyJSON.h"
 #include "debug.h"
 
-void freeJObject(JObject *object)
-{
-	int i;
-	if (object->size != 0)
-	{
-		for (i = 0; i < object->size; i++)
-		{
-			freeJObject(CJ_getIndex(object, i));
-		}
-		free(object->objects);
-		object->objects = NULL;
-	}
-	return;
-}
-
 char *openJSONFile(char *filename)
 {
 	FILE *fp = fopen(filename, "r"); // read mode
@@ -77,7 +62,8 @@ START_TEST(simpleObjectTest)
 	ck_assert_str_eq(CJ_getKey(&object, "work")->valueAsString, "Example.org");
 	ck_assert(CJ_getKey(&object, "age")->valueAsInt16 == 39);
 
-	freeJObject(&object);
+	//freeJObject(&object);
+	CJ_free(&object);
 	free(fileContent);
 	fileContent = NULL;
 	LOG(LOG_ALERT, "--- OK ---");
@@ -109,7 +95,8 @@ START_TEST(simpleArrayTest)
 	ck_assert(CJ_getIndex(CJ_getKey(&object, "intArray"), 4)->valueAsInt16 == 5);
 	ck_assert(CJ_getIndex(CJ_getKey(&object, "intArray"), 5)->valueAsInt16 == 6);
 
-	freeJObject(&object);
+	//freeJObject(&object);
+	CJ_free(&object);
 	free(fileContent);
 	fileContent = NULL;
 	LOG(LOG_ALERT, "--- OK ---");
@@ -169,7 +156,8 @@ START_TEST(multipleObjectTest)
 	ck_assert(CJ_getKey(user2, "afgestudeerd")->valueAsBool == false);
 	ck_assert(CJ_getKey(user2, "age")->valueAsInt16 == 55);
 
-	freeJObject(&object);
+	//freeJObject(&object);
+	CJ_free(&object);
 	free(fileContent);
 	fileContent = NULL;
 	LOG(LOG_ALERT, "--- OK ---");
@@ -210,7 +198,8 @@ START_TEST(recursiveArrayTest)
 	ck_assert(CJ_getIndex(arrayItem2, 0)->valueAsInt16 == 1);
 	ck_assert(CJ_getIndex(arrayItem2, 1)->valueAsInt16 == 2);
 
-	freeJObject(&object);
+	//freeJObject(&object);
+	CJ_free(&object);
 	free(fileContent);
 	fileContent = NULL;
 	LOG(LOG_ALERT, "--- OK ---");
@@ -273,7 +262,8 @@ START_TEST(recursiveObjectTest)
 	ck_assert(CJ_exists(thirdObject, "data") == true);
 	ck_assert_str_eq(CJ_getKey(thirdObject, "data")->valueAsString, "data");
 
-	freeJObject(&object);
+	//freeJObject(&object);
+	CJ_free(&object);
 	free(fileContent);
 	fileContent = NULL;
 	LOG(LOG_ALERT, "--- OK ---");
@@ -364,7 +354,8 @@ START_TEST(recursiveTest)
 	ck_assert(CJ_getKey(ObjectinArrayinObject, "ObjectinArrayinObject")->valueAsBool == true);
 	ck_assert(CJ_getKey(ObjectinArrayinObject, "data")->valueAsInt16 == 10);
 
-	freeJObject(&object);
+	//freeJObject(&object);
+	CJ_free(&object);
 	free(fileContent);
 	fileContent = NULL;
 	LOG(LOG_ALERT, "--- OK ---");
@@ -376,15 +367,7 @@ START_TEST(addKeysTest)
 	LOG(LOG_ALERT, "--- AddKeysTest ---");
 	bool ret;
 	JObject object;
-	object.isArray = false;
-	object.isObject = false;
-	object.objects = NULL;
-	object.size = 0;
-	object.valueAsBool = false;
-	object.valueAsHex = 0;
-	object.valueAsInt16 = 0;
-	object.valueAsString = NULL;
-	object.key = NULL;
+	CJ_initObject(&object);
 	ret = CJ_addKeyString(&object, "test", 4, "Test", 4);
 
 	ck_assert(ret);
@@ -426,7 +409,8 @@ START_TEST(addKeysTest)
 	ck_assert(CJ_exists(&object, "int"));
 	ck_assert(CJ_getKey(&object, "int")->valueAsInt16 == 660);
 	
-	freeJObject(&object);
+	//freeJObject(&object);
+	CJ_free(&object);
 	LOG(LOG_ALERT, "--- OK ---");
 }
 END_TEST
@@ -436,21 +420,12 @@ START_TEST(addTest)
 	LOG(LOG_ALERT, "--- AddTest ---");
 	bool ret;
 	JObject object;
-	object.isArray = false;
-	object.isObject = false;
-	object.objects = NULL;
-	object.size = 0;
-	object.valueAsBool = false;
-	object.valueAsHex = 0;
-	object.valueAsInt16 = 0;
-	object.valueAsString = NULL;
-	object.key = NULL;
+	CJ_initObject(&object);
 	ret = CJ_addString(&object, "Test", 4);
 
 	ck_assert(ret);
 	ck_assert(!object.isObject);
 	ck_assert(object.isArray);
-	ck_assert(object.size == 1);
 	ck_assert(object.size == 1);
 	ck_assert(strstr(CJ_getIndex(&object, 0)->valueAsString, "Test") != NULL);
 
@@ -478,8 +453,29 @@ START_TEST(addTest)
 	ck_assert(object.size == 5);
 	ck_assert(CJ_getIndex(&object, 4)->valueAsInt16 == 660);
 	
-	freeJObject(&object);
+	//freeJObject(&object);
+	CJ_free(&object);
 	LOG(LOG_ALERT, "--- OK ---");
+}
+END_TEST
+
+START_TEST(freeTest)
+{
+	LOG(LOG_ALERT, "--- FreeTest ---");
+	bool ret;
+	JObject object;
+	CJ_initObject(&object);
+	ret = CJ_addKeyString(&object, "test", 4, "test", 4);
+	ck_assert(ret);
+	ck_assert(object.isObject);
+	ck_assert(!object.isArray);
+	ck_assert(object.size == 1);
+
+	ret = CJ_free(&object);
+	ck_assert(ret == 0);
+	ck_assert(object.key == NULL);
+	ck_assert(object.objects == NULL);
+	ck_assert(object.size == 0);
 }
 END_TEST
 
@@ -501,6 +497,7 @@ Suite* GetMainTestSuite(void)
 	tcase_add_test(tc_core, recursiveTest);
 	tcase_add_test(tc_core, addKeysTest);
 	tcase_add_test(tc_core, addTest);
+	tcase_add_test(tc_core, freeTest);
 	suite_add_tcase(s, tc_core);
 
 	return s;

@@ -21,7 +21,7 @@ void CJ_parse(char *JSONdata, JObject *object)
 		return;
 	}
 	char *data = JSONdata;
-	initObject(object);
+	CJ_initObject(object);
 	object->isObject = true;
 
 	getObject(&data, object);
@@ -90,7 +90,7 @@ char *findOneOf(char *haystack, char *needles)
 	}
 }
 
-void initObject(JObject *object)
+void CJ_initObject(JObject *object)
 {
 	//LOG(LOG_DEBUG, "initObject");
 	object->isObject = false;
@@ -208,7 +208,7 @@ void getArray(char **data, JObject *object)
 	{
 		int size = (sizeof(JObject) * (object->size + 1)) + 1;
 		object->objects = (JObject *)realloc(object->objects, size);
-		initObject(&object->objects[object->size]);
+		CJ_initObject(&object->objects[object->size]);
 		if (getItem(data, &(object->objects[object->size].valueAsString)) != 0)
 		{
 			if ((*data)[0] == '[')
@@ -251,7 +251,7 @@ void getObject(char **data, JObject *object)
 	{
 		int size = (sizeof(JObject) * (object->size + 1)) + 1;
 		object->objects = (JObject *)realloc(object->objects, sizeof(JObject) * (object->size + 1));
-		initObject(&object->objects[object->size]);
+		CJ_initObject(&object->objects[object->size]);
 		getKeyValuePair(data, &object->objects[object->size]);
 		object->size++;
 	}
@@ -288,6 +288,48 @@ void readEmptyChars(char **data, bool includeComma)
 	{
 		(*data)++;
 	}
+}
+
+int freePair(JObject *object)
+{
+	if(object->isObject || object->isArray)
+	{
+		return -1;
+	}
+
+	object->valueAsBool = false;
+	object->valueAsHex = 0;
+	object->valueAsInt16 = 0;
+	free(object->valueAsString);
+	object->valueAsString = NULL;
+}
+
+int CJ_free(JObject *object)
+{
+	int i;
+	if (object->size != 0)
+	{
+		for (i = 0; i < object->size; i++)
+		{
+			JObject *child = CJ_getIndex(object, i);
+			if(CJ_free(child) != 0)
+			{
+				return -1;
+			}
+			child = NULL;
+		}
+		free(object->objects);
+		object->objects = NULL;
+		object->size = 0;
+	}
+	free(object->key);
+	object->key = NULL;
+	free(object->valueAsString);
+	object->valueAsString = NULL;
+	object->valueAsBool = false;
+	object->valueAsHex = 0;
+	object->valueAsInt16 = 0;
+	return 0;
 }
 
 
@@ -335,7 +377,7 @@ bool CJ_addKeyString(JObject *object, char *key, int keyLength, char *value, int
 	object->isObject = true;
 	int size = (sizeof(JObject) * (object->size + 1));
 	object->objects = (JObject *)realloc(object->objects, sizeof(JObject) * (object->size + 1) + 1);
-	initObject(&object->objects[object->size]);
+	CJ_initObject(&object->objects[object->size]);
 	object->objects[object->size].key = (char *)malloc(keyLength + 1);
 	memset(object->objects[object->size].key, '\0', keyLength + 1);
 	strncpy(object->objects[object->size].key, key, keyLength);
@@ -391,7 +433,7 @@ bool CJ_addString(JObject *object, char *value, int length)
 	object->isArray = true;
 	int size = (sizeof(JObject) * (object->size + 1));
 	object->objects = (JObject *)realloc(object->objects, sizeof(JObject) * (object->size + 1) + 1);
-	initObject(&object->objects[object->size]);
+	CJ_initObject(&object->objects[object->size]);
 	object->objects[object->size].valueAsString = (char*)malloc(sizeof(char) * (length + 1));
 	memset(object->objects[object->size].valueAsString, '\0', sizeof(object->objects[object->size].valueAsString));
 	strncpy(object->objects[object->size].valueAsString, value, length);

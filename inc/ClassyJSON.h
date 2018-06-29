@@ -47,6 +47,11 @@ JObject *CJ_getKey(JObject *object, const char *key);
 JObject *CJ_getIndex(JObject *object, int i);
 
 /**
+* 
+*/
+void CJ_initObject(JObject *object);
+
+/**
 *
 */
 bool CJ_addKeyInt(JObject *object, char *key, int keyLength, long value);
@@ -84,5 +89,10 @@ bool CJ_addBool(JObject *object, bool value);
 *
 */
 bool CJ_addString(JObject *object, char *value, int length);
+
+/**
+* 
+*/
+int CJ_free(JObject *object);
 
 #endif //__CLASSYJSON_H__

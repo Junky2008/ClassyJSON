@@ -9,11 +9,6 @@
 char *findOneOf(char *haystack, char *needles);
 
 /**
- * initialise default JObject
- */
-void initObject(JObject *object);
-
-/**
  * get item, an item can be a string, integer, hex value or boolean
  */
 int getItem(char **data, char **item);
