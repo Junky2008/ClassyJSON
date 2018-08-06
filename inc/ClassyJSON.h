@@ -95,4 +95,9 @@ bool CJ_addString(JObject *object, char *value, int length);
 */
 int CJ_free(JObject *object);
 
+/**
+*
+*/
+int CJ_toString(JObject *object, char *json);
+
 #endif //__CLASSYJSON_H__

@@ -441,3 +441,88 @@ bool CJ_addString(JObject *object, char *value, int length)
 	object->size++;
 	return true;
 }
+
+int indentationCount;
+
+void printTabs(char *json)
+{
+	int i;
+	for (i = 0; i < indentationCount; i++)
+	{
+		sprintf(json + strlen(json), "\t");
+	}
+}
+
+void printKeyValue(char *json, JObject *object)
+{
+	if (object->key != NULL)
+	{
+		sprintf(json + strlen(json), "\"%s\": ", object->key);
+	}
+	sprintf(json + strlen(json), "\"%s\"", object->valueAsString);
+	sprintf(json + strlen(json), ",");
+}
+
+void printArray(char *json, JObject *object)
+{
+	if (object->key != NULL)
+	{
+		sprintf(json + strlen(json), "\"%s\": ", object->key);
+	}
+	sprintf(json + strlen(json), "[");
+	indentationCount++;
+	int i;
+	for (i = 0; i < object->size; i++)
+	{
+		printJObject(json, &object->objects[i]);
+	}
+	indentationCount--;
+	printTabs(json);
+	sprintf(json + (strlen(json) - 1), "],");
+}
+
+void printObject(char *json, JObject *object)
+{
+	if (object->key != NULL)
+	{
+		sprintf(json + strlen(json), "\"%s\": ", object->key);
+	}
+	sprintf(json + strlen(json), "{");
+	indentationCount++;
+	int i;
+	for (i = 0; i < object->size; i++)
+	{
+		printJObject(json, &object->objects[i]);
+	}
+	indentationCount--;
+	printTabs(json);
+	sprintf(json + (strlen(json) - 1), "},");
+}
+
+void printJObject(char *json, JObject *object)
+{
+	indentationCount = 0;
+
+	if (object->isObject)
+	{
+		printTabs(json);
+		printObject(json, object);
+	}
+	else if (object->isArray)
+	{
+		printTabs(json);
+		printArray(json, object);
+	}
+	else
+	{
+		printTabs(json);
+		printKeyValue(json, object);
+	}
+}
+
+int CJ_toString(JObject *object, char *json)
+{
+	printJObject(json, object);
+	json[strlen(json) - 1] = '\0';
+	return strlen(json);
+}

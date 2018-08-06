@@ -45,4 +45,14 @@ void parseData(char *string, long *integer, long *hex, bool *boolean);
  */
 void readEmptyChars(char **data, bool includeComma);
 
+void printTabs(char *json);
+
+void printKeyValue(char *json, JObject *object);
+
+void printArray(char *json, JObject *object);
+
+void printObject(char *json, JObject *object);
+
+void printJObject(char *json, JObject *object);
+
 #endif //__CLASSYJSON_PRIVATE_H__
