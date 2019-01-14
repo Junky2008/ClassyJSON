@@ -235,6 +235,12 @@ int main(int argc, char** argv)
 	printf("parse\n");
 	CJ_parse(JSONdata, &object);
 	printf("parsed\n");
+
+	char *testData;
+	CJ_getString(&object, &testData);
+	printf("\n\n[%s]\n\n", testData);
+	free(testData);
+	testData = NULL;
 	
 	printf("print\n");
 	printJObject(&object);

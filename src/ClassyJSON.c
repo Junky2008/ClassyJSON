@@ -27,6 +27,94 @@ void CJ_parse(char *JSONdata, JObject *object)
 	getObject(&data, object);
 }
 
+bool CJ_getString(JObject *object, char **str)
+{
+	if (object->isObject)
+	{
+		char *objectData[object->size];
+		int len = 0;
+		int i = 0;
+		for (i = 0; i < object->size; i++)
+		{
+			CJ_getString(CJ_getIndex(object, i), &objectData[i]);
+			len += (strlen(objectData[i]) + 1);
+		}
+		if (object->key != NULL)
+		{
+			*str = malloc(len + 5 + strlen(object->key));
+			memset(*str, '\0', len + 5 + strlen(object->key));
+			sprintf(*str, "\"%s\":{", object->key);
+		}
+		else
+		{
+			*str = malloc(len + 2);
+			memset(*str, '\0', len + 2);
+			sprintf(*str, "{");
+		}
+		for (i = 0; i < object->size; i++)
+		{
+			if (i != 0)
+			{
+				strcat(*str, ",");
+			}
+			strcat(*str, objectData[i]);
+			free(objectData[i]);
+			objectData[i] = NULL;
+		}
+		strcat(*str, "}");
+	}
+	else if (object->isArray)
+	{
+		char *objectData[object->size];
+		int len = 0;
+		int i = 0;
+		for (i = 0; i < object->size; i++)
+		{
+			CJ_getString(CJ_getIndex(object, i), &objectData[i]);
+			len += (strlen(objectData[i]) + 1);
+		}
+		if (object->key != NULL)
+		{
+			*str = malloc(len + 5 + strlen(object->key));
+			memset(*str, '\0', len + 5 + strlen(object->key));
+			sprintf(*str, "\"%s\":[", object->key);
+		}
+		else
+		{
+			*str = malloc(len + 2);
+			memset(*str, '\0', len + 2);
+			sprintf(*str, "[");
+		}
+		for (i = 0; i < object->size; i++)
+		{
+			if (i != 0)
+			{
+				strcat(*str, ",");
+			}
+			strcat(*str, objectData[i]);
+			free(objectData[i]);
+			objectData[i] = NULL;
+		}
+		strcat(*str, "]");
+	}
+	else
+	{
+		if (object->key != NULL)
+		{
+			*str = malloc(strlen(object->key) + strlen(object->valueAsString) + 6);
+			memset(*str, '\0', strlen(object->key) + strlen(object->valueAsString) + 6);
+			sprintf(*str, "\"%s\":\"%s\"", object->key, object->valueAsString);
+		}
+		else
+		{
+			*str = malloc(strlen(object->valueAsString) + 3);
+			memset(*str, '\0', strlen(object->valueAsString) + 3);
+			sprintf(*str, "\"%s\"", object->valueAsString);
+		}
+	}
+	return true;
+}
+
 bool CJ_exists(JObject *object, const char *key)
 {
 	//LOG(LOG_DEBUG, "CJ_exists");

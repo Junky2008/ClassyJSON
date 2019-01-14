@@ -32,6 +32,11 @@ typedef struct Jobject
 void CJ_parse(char *JSONdata, JObject *object);
 
 /**
+ * allocs and sets the string to represent the json string of the object
+ */
+bool CJ_getString(JObject *object, char **string);
+
+/**
  * checks if the given key exists in the given object
  */
 bool CJ_exists(JObject *object, const char *key);
